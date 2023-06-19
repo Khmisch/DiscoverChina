@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
-    <string name="discover_china">Discover China</string>
+    <string name="app_name">Discover China</string>
     <string name="share_ideas_with_your_friends">Share ideas with your friends</string>
     <string name="related_photo_not_found">Related photos not found</string>
     <string name="search_your_pins">Search your Pins</string>
