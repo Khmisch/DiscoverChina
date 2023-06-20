@@ -42,7 +42,7 @@
                         android:padding="8dp"
                         android:gravity="center"
                         android:textColor="@color/white"
-                        android:text="Cities" />
+                        android:text="@string/cities" />
 
                     <TextView
                         android:id="@+id/tv_cuisine"
@@ -55,7 +55,7 @@
                         android:layout_marginStart="2dp"
                         android:layout_marginEnd="2dp"
                         android:textColor="@color/white"
-                        android:text="Cuisine" />
+                        android:text="@string/cuisine" />
 
                     <TextView
                         android:id="@+id/tv_festivals"
@@ -68,7 +68,7 @@
                         android:textColor="@color/white"
                         android:layout_marginStart="2dp"
                         android:layout_marginEnd="2dp"
-                        android:text="Festivals" />
+                        android:text="@string/festivals" />
 
                     <TextView
                         android:id="@+id/tv_kungfu"
@@ -81,7 +81,7 @@
                         android:layout_marginStart="2dp"
                         android:layout_marginEnd="2dp"
                         android:textColor="@color/white"
-                        android:text="Kungfu" />
+                        android:text="@string/kungfu" />
 
                 </LinearLayout>
 

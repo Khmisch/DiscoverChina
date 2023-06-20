@@ -1,5 +1,6 @@
 package com.example.myapplication.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,14 +24,18 @@ import com.example.myapplication.database.PinRepository;
 import com.example.myapplication.helper.SpacesItemDecoration;
 import com.example.myapplication.model.Photo;
 import com.example.myapplication.model.Pin;
+import com.example.myapplication.service.BackgroundMusicService;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class ProfileFragment extends BaseFragment {
-    private EditText edt_search;
+public class ProfileFragment extends Fragment {
     private RecyclerView rvSavedPhotos;
     private ResultPhotosAdapter photosAdapter;
     private PinRepository pinRepository;
+    private TextView tvNoSavedPins;
+    private ImageView iv_mute;
+    private boolean isMusicPlaying;
 
     @Nullable
     @Override
@@ -50,6 +57,8 @@ public class ProfileFragment extends BaseFragment {
 
     private void initViews(View view) {
         rvSavedPhotos = view.findViewById(R.id.rv_saved_photos);
+        tvNoSavedPins = view.findViewById(R.id.tv_no_saved_pins);
+        iv_mute = view.findViewById(R.id.iv_mute);
 
         rvSavedPhotos.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         SpacesItemDecoration decoration = new SpacesItemDecoration(10);
@@ -57,8 +66,39 @@ public class ProfileFragment extends BaseFragment {
         pinRepository = new PinRepository(requireActivity().getApplication());
         photosAdapter = new ResultPhotosAdapter(requireContext());
         rvSavedPhotos.setAdapter(photosAdapter);
+
+        tvNoSavedPins.setVisibility(View.GONE);
+        checkSavedPins();
+
+        isMusicPlaying = BackgroundMusicService.isMusicPlaying();
+        updateMuteButtonState();
+
+        iv_mute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleBackgroundMusic();
+            }
+        });
     }
 
+    private void toggleBackgroundMusic() {
+        if (isMusicPlaying) {
+            BackgroundMusicService.stopMusic();
+            isMusicPlaying = false;
+        } else {
+            BackgroundMusicService.startMusic(getContext());
+            isMusicPlaying = true;
+        }
+        updateMuteButtonState();
+    }
+
+    private void updateMuteButtonState() {
+        if (isMusicPlaying) {
+            iv_mute.setImageResource(R.drawable.volume);
+        } else {
+            iv_mute.setImageResource(R.drawable.mute);
+        }
+    }
     private void refreshAdapter() {
         ArrayList<Photo> photoList = new ArrayList<>();
         for (Pin item : pinRepository.getAllSavedPhotos()) {
@@ -67,5 +107,15 @@ public class ProfileFragment extends BaseFragment {
             }
         }
         photosAdapter.addNewPhotos(photoList);
+        checkSavedPins();
+    }
+
+    private void checkSavedPins() {
+        List<Pin> savedPins = pinRepository.getAllSavedPhotos();
+        if (savedPins.isEmpty()) {
+            tvNoSavedPins.setVisibility(View.VISIBLE);
+        } else {
+            tvNoSavedPins.setVisibility(View.GONE);
+        }
     }
 }

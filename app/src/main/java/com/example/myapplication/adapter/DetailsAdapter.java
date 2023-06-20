@@ -15,10 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.activity.DetailsActivity;
+import com.example.myapplication.fragment.DetailsFragment;
+import com.example.myapplication.manager.PrefsManager;
 import com.example.myapplication.model.Photo;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.PhotoViewHolder> {
     private Context context;
@@ -63,6 +66,33 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.PhotoVie
                 callDetails(position);
             }
         });
+
+        final boolean[] isLiked = {PrefsManager.getInstance(context).getBoolean(getLikedKey(photoItem.getId()), false)};
+
+        if (isLiked[0]) {
+            holder.iv_like.setImageResource(R.drawable.liked);
+        } else {
+            holder.iv_like.setImageResource(R.drawable.like);
+        }
+
+        holder.iv_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isLiked[0] = !isLiked[0];
+
+                if (isLiked[0]) {
+                    holder.iv_like.setImageResource(R.drawable.liked);
+                } else {
+                    holder.iv_like.setImageResource(R.drawable.like);
+                }
+
+                PrefsManager.getInstance(context).saveBoolean(getLikedKey(photoItem.getId()), isLiked[0]);
+            }
+        });
+    }
+
+    private String getLikedKey(String photoId) {
+        return "liked_" + photoId;
     }
 
     private void callDetails(int position) {
@@ -73,6 +103,17 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.PhotoVie
         context.startActivity(intent);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    public void updateLikedState(String photoId, boolean isLiked) {
+        for (Photo photo : photoList) {
+            if (Objects.equals(photo.getId(), photoId)) {
+                photo.setLiked(isLiked);
+                notifyDataSetChanged();
+                break;
+            }
+        }
+    }
+
     @Override
     public int getItemCount() {
         return photoList.size();
@@ -80,12 +121,15 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.PhotoVie
 
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPhoto;
+        ImageView iv_like;
         TextView tvDescription;
 
         PhotoViewHolder(View view) {
             super(view);
             ivPhoto = view.findViewById(R.id.iv_pin);
+            iv_like = view.findViewById(R.id.iv_like);
             tvDescription = view.findViewById(R.id.tv_description);
+
         }
     }
 }

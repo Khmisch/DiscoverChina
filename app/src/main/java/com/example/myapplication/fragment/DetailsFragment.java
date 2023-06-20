@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.adapter.DetailsAdapter;
 import com.example.myapplication.database.PinRepository;
 import com.example.myapplication.helper.SpacesItemDecoration;
+import com.example.myapplication.manager.PrefsManager;
 import com.example.myapplication.model.Photo;
 import com.example.myapplication.model.Pin;
 import com.example.myapplication.model.RelatedPhotos;
@@ -61,10 +63,13 @@ public class DetailsFragment extends Fragment {
         ImageView ivPhoto = view.findViewById(R.id.iv_photo);
         TextView tvBtnSave = view.findViewById(R.id.tv_btn_save);
         ImageView ivProfile = view.findViewById(R.id.iv_profile);
+        ImageView iv_like = view.findViewById(R.id.iv_like);
+        ImageView iv_btn_like = view.findViewById(R.id.iv_btn_like);
         TextView tvFullName = view.findViewById(R.id.tv_fullName);
         TextView tvFollowers = view.findViewById(R.id.tv_followers);
         TextView tvDescription = view.findViewById(R.id.tv_description);
-        ImageView ivProfileMe = view.findViewById(R.id.iv_profile_me);
+        String followers = getString(R.string.followers);
+        RatingBar ratingBar = view.findViewById(R.id.ratingBar);
         tvRelated = view.findViewById(R.id.tv_related);
 
         RecyclerView rvDetails = view.findViewById(R.id.rv_details);
@@ -84,11 +89,20 @@ public class DetailsFragment extends Fragment {
                 .placeholder(new ColorDrawable(Color.parseColor(photoItem.getColor()))).into(ivProfile);
 
         tvFullName.setText(photoItem.getUser().getName());
-        tvFollowers.setText(photoItem.getUser().getTotal_photos() + " Followers");
+        tvFollowers.setText(photoItem.getUser().getTotal_photos() + " " + followers);
         tvDescription.setText(getDescription(s1, s2, s3));
 
-        Glide.with(requireContext()).load(R.drawable.im_post_4)
-                .placeholder(new ColorDrawable(Color.parseColor(photoItem.getColor()))).into(ivProfileMe);
+        String itemId = photoItem.getId();
+
+        float savedRating = PrefsManager.getInstance(requireContext()).getFloat(itemId, 0f);
+        ratingBar.setRating(savedRating);
+
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                PrefsManager.getInstance(requireContext()).putFloat(itemId, rating);
+            }
+        });
 
         ivBtnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +118,34 @@ public class DetailsFragment extends Fragment {
                 tvBtnSave.setBackgroundTintList(requireContext().getResources().getColorStateList(R.color.ic_default_color));
             }
         });
+
+        final boolean[] isLiked = {PrefsManager.getInstance(requireContext()).getBoolean(getLikedKey(photoItem.getId()), false)};
+
+        if (isLiked[0]) {
+            iv_btn_like.setImageResource(R.drawable.liked);
+        } else {
+            iv_btn_like.setImageResource(R.drawable.like);
+        }
+
+        iv_btn_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isLiked[0] = !isLiked[0];
+
+                if (isLiked[0]) {
+                    iv_btn_like.setImageResource(R.drawable.liked);
+                } else {
+                    iv_btn_like.setImageResource(R.drawable.like);
+                }
+
+                PrefsManager.getInstance(requireContext()).saveBoolean(getLikedKey(photoItem.getId()), isLiked[0]);
+            }
+        });
+        adapter.updateLikedState(String.valueOf(iv_like), isLiked[0]);
+    }
+
+    private String getLikedKey(String photoId) {
+        return "liked_" + photoId;
     }
 
     private void apiRelatedPhotos(String id) {

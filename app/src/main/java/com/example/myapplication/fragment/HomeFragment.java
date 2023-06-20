@@ -76,6 +76,8 @@ public class HomeFragment extends Fragment {
         tv_cuisine.setOnClickListener(onClickListener);
         tv_festivals.setOnClickListener(onClickListener);
         tv_kungfu.setOnClickListener(onClickListener);
+
+
     }
 
     private void apiGetChinese(String query) {

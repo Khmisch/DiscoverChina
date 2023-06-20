@@ -8,6 +8,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -24,7 +25,7 @@ import retrofit2.Response;
 
 import java.util.ArrayList;
 
-public class SearchFragment extends BaseFragment {
+public class SearchFragment extends Fragment {
 
     private EditText edt_search;
     private RecyclerView recyclerView;

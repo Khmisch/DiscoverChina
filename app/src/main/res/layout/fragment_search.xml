@@ -45,7 +45,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:background="@drawable/shape_border_rounded"
-                    android:hint="Search for ideas"
+                    android:hint="@string/search_for_ideas"
                     android:paddingLeft="15dp"
                     android:textColorHint="#90595555"
                     android:textSize="16sp" />

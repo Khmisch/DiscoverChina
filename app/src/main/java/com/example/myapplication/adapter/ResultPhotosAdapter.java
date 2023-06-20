@@ -17,6 +17,7 @@ import com.example.myapplication.activity.DetailsActivity;
 import com.example.myapplication.manager.PrefsManager;
 import com.example.myapplication.model.Photo;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ResultPhotosAdapter extends RecyclerView.Adapter<ResultPhotosAdapter.ViewHolder> {
 
@@ -50,9 +51,9 @@ public class ResultPhotosAdapter extends RecyclerView.Adapter<ResultPhotosAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Photo photoItem = photoList.get(position);
         String photoColor = photoItem.getColor();
-        String photoUrl = photoItem.getUrls().getThumb();
+        String photoUrl = Objects.requireNonNull(photoItem.getUrls()).getThumb();
 
-        holder.tvDescription.setText(photoItem.getUser().getBio());
+        holder.tvDescription.setText(Objects.requireNonNull(photoItem.getUser()).getBio());
         Glide.with(context).load(photoUrl).placeholder(new ColorDrawable(Color.parseColor(photoColor))).into(holder.ivPhoto);
 
         holder.ivPhoto.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +62,33 @@ public class ResultPhotosAdapter extends RecyclerView.Adapter<ResultPhotosAdapte
                 callDetails(position);
             }
         });
+
+        final boolean[] isLiked = {PrefsManager.getInstance(context).getBoolean(getLikedKey(photoItem.getId()), false)};
+
+        if (isLiked[0]) {
+            holder.iv_like.setImageResource(R.drawable.liked);
+        } else {
+            holder.iv_like.setImageResource(R.drawable.like);
+        }
+
+        holder.iv_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isLiked[0] = !isLiked[0];
+
+                if (isLiked[0]) {
+                    holder.iv_like.setImageResource(R.drawable.liked);
+                } else {
+                    holder.iv_like.setImageResource(R.drawable.like);
+                }
+
+                PrefsManager.getInstance(context).saveBoolean(getLikedKey(photoItem.getId()), isLiked[0]);
+            }
+        });
+    }
+
+    private String getLikedKey(String photoId) {
+        return "liked_" + photoId;
     }
 
     @Override
@@ -77,14 +105,14 @@ public class ResultPhotosAdapter extends RecyclerView.Adapter<ResultPhotosAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPhoto;
+        ImageView iv_like;
         TextView tvDescription;
-        ImageView ivMore;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivPhoto = itemView.findViewById(R.id.iv_pin);
+            iv_like = itemView.findViewById(R.id.iv_like);
             tvDescription = itemView.findViewById(R.id.tv_description);
-            ivMore = itemView.findViewById(R.id.iv_more);
         }
     }
 }

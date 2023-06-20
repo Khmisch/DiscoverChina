@@ -1,57 +1,50 @@
 package com.example.myapplication.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.widget.ImageView;
-import com.example.myapplication.R;
 
+import androidx.appcompat.app.AppCompatActivity;
 
-/**
- * BaseActivity is parent for all Activities
- */
-public class BaseActivity extends AppCompatActivity {
-    private Dialog progressDialog;
-    Context context;
+import com.example.myapplication.manager.LanguageManager;
+import com.example.myapplication.service.BackgroundMusicService;
 
+public abstract class BaseActivity extends AppCompatActivity {
+    private Intent backgroundMusicIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = this;
+
+        backgroundMusicIntent = new Intent(this, BackgroundMusicService.class);
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startBackgroundMusic();
     }
 
-    public void showLoading(Activity activity) {
-        if (activity == null) return;
-
-        if (progressDialog != null && progressDialog.isShowing()) {
-//            progressDialog.dismiss();
-        } else {
-            progressDialog = new Dialog(activity, R.style.CustomDialog);
-            progressDialog.setCancelable(false);
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            progressDialog.setContentView(R.layout.custom_progress_dialog);
-            ImageView iv_progress = progressDialog.findViewById(R.id.iv_progress);
-            AnimationDrawable animationDrawable = (AnimationDrawable) iv_progress.getDrawable();
-            animationDrawable.start();
-            if (!activity.isFinishing()) progressDialog.show();
-        }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopBackgroundMusic();
+    }
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+        LanguageManager.loadLanguage(this);
     }
 
-    protected void dismissLoading() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
+    protected void startBackgroundMusic() {
+        startService(backgroundMusicIntent);
     }
 
-    public void callMainActivity(Context context) {
-        Intent intent = new Intent(this, MainActivity.class);
+    protected void stopBackgroundMusic() {
+        stopService(backgroundMusicIntent);
+    }
+
+
+    public void callHomeActivity(Context context) {
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();
     }

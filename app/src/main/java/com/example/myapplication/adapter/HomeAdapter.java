@@ -1,6 +1,7 @@
 package com.example.myapplication.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -13,9 +14,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.activity.DetailsActivity;
+import com.example.myapplication.activity.HomeActivity;
 import com.example.myapplication.fragment.HomeFragment;
+import com.example.myapplication.manager.PrefsManager;
 import com.example.myapplication.model.Photo;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.gson.Gson;
@@ -50,11 +54,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         Photo photoItem = items.get(position);
         String photoUrl = photoItem.getUrls().getThumb();
         String photoColor = photoItem.getColor();
-//        Object s1 = photoItem.getAltDescription();
-        String s2 = photoItem.getDescription();
-        String s3 = photoItem.getUser().getName();
 
-        Picasso.get().load(photoUrl)
+        holder.tv_description.setText(photoItem.getUser().getBio());
+        Glide.with(context)
+                .load(photoUrl)
                 .placeholder(new ColorDrawable(Color.parseColor(photoColor)))
                 .into(holder.iv_pin);
 
@@ -64,6 +67,33 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
                 callDetails(position);
             }
         });
+
+        final boolean[] isLiked = {PrefsManager.getInstance(context.getActivity()).getBoolean(getLikedKey(photoItem.getId()), false)};
+
+        if (isLiked[0]) {
+            holder.iv_like.setImageResource(R.drawable.liked);
+        } else {
+            holder.iv_like.setImageResource(R.drawable.like);
+        }
+
+        holder.iv_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isLiked[0] = !isLiked[0];
+
+                if (isLiked[0]) {
+                    holder.iv_like.setImageResource(R.drawable.liked);
+                } else {
+                    holder.iv_like.setImageResource(R.drawable.like);
+                }
+
+                PrefsManager.getInstance(context.getActivity()).saveBoolean(getLikedKey(photoItem.getId()), isLiked[0]);
+            }
+        });
+    }
+
+    private String getLikedKey(String photoId) {
+        return "liked_" + photoId;
     }
 
     private void callDetails(int position) {
@@ -82,13 +112,13 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ShapeableImageView iv_pin;
         TextView tv_description;
-        ImageView iv_more;
+        ImageView iv_like;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             iv_pin = itemView.findViewById(R.id.iv_pin);
             tv_description = itemView.findViewById(R.id.tv_description);
-            iv_more = itemView.findViewById(R.id.iv_more);
+            iv_like = itemView.findViewById(R.id.iv_like);
         }
     }
 

@@ -16,6 +16,10 @@ public class PrefsManager {
 
     public static final String KEY_ARRAY_LIST = "arrayList";
     public static final String KEY_PHOTO_LIST = "photoList";
+    public static final String KEY_RATING_PREFIX = "rating_";
+
+    private SharedPreferences.Editor editor;
+
 
     private static PrefsManager prefsManager;
 
@@ -42,9 +46,33 @@ public class PrefsManager {
         }
     }
 
+    public void saveBoolean(String key, boolean value) {
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        prefsEditor.putBoolean(key, value);
+        prefsEditor.apply();
+    }
+
+    public boolean getBoolean(String key, boolean defaultValue) {
+        return sharedPreferences.getBoolean(key, defaultValue);
+    }
+
+    public void putFloat(String itemId, float value) {
+        String key = KEY_RATING_PREFIX + itemId;
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        prefsEditor.putFloat(key, value);
+        prefsEditor.apply();
+    }
+
+    public float getFloat(String itemId, float defaultValue) {
+        String key = KEY_RATING_PREFIX + itemId;
+        return sharedPreferences.getFloat(key, defaultValue);
+    }
+
+
     public void removeData(String key) {
         SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
         prefsEditor.remove(key);
         prefsEditor.apply();
     }
+
 }

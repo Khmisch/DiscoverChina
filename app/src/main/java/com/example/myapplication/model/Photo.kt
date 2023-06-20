@@ -21,7 +21,9 @@ data class Photo(
     val urls: Urls? = null,
     val user: User? = null,
     val width: Int? = null
-)
+) {
+    var liked: Boolean = false
+}
 
 data class Links(
     val download: String? = null,
