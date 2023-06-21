@@ -1,5 +1,6 @@
 package com.example.myapplication.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -14,6 +15,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.fragment.HomeFragment;
 import com.example.myapplication.fragment.ProfileFragment;
 import com.example.myapplication.fragment.SearchFragment;
+import com.example.myapplication.service.BackgroundMusicService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends BaseActivity {

@@ -36,12 +36,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<DetailsAdapter.PhotoVie
         notifyDataSetChanged();
     }
 
-    public void addNewPhotos(ArrayList<Photo> photoList) {
-        this.photoList.clear();
-        this.photoList.addAll(photoList);
-        notifyDataSetChanged();
-    }
-
     @Override
     public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home_view, parent, false);

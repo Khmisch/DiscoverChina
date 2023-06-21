@@ -36,12 +36,6 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         this.items = items;
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void addPhotos(ArrayList<Photo> items) {
-        this.items.addAll(items);
-        notifyDataSetChanged();
-    }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -122,13 +116,4 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         }
     }
 
-    private String getDescription(Object s1, String s2, String s3) {
-        if (s1 != null) {
-            return s1.toString();
-        } else if (s2 != null) {
-            return s2;
-        } else {
-            return "Photo was made by " + s3;
-        }
-    }
 }

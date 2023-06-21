@@ -20,6 +20,8 @@ import com.example.myapplication.helper.SpacesItemDecoration;
 import com.example.myapplication.model.Photo;
 import com.example.myapplication.model.Search;
 import com.example.myapplication.network.RetrofitHttp;
+import com.example.myapplication.service.BackgroundMusicService;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,6 +42,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         initViews(view);
+
+
         return view;
     }
 

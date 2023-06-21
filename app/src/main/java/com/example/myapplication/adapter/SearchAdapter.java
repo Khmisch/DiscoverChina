@@ -7,21 +7,25 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.activity.DetailsActivity;
 import com.example.myapplication.fragment.SearchFragment;
+import com.example.myapplication.manager.PrefsManager;
 import com.example.myapplication.model.Photo;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.squareup.picasso.Picasso;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.PinsViewHolder> {
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
     private final SearchFragment context;
     private final ArrayList<Photo> items;
@@ -31,29 +35,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.PinsViewHo
         this.items = items;
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void addPhotos(ArrayList<Photo> items) {
-        this.items.addAll(items);
-        notifyDataSetChanged();
-    }
-
     @NonNull
     @Override
-    public PinsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home_view, parent, false);
-        return new PinsViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PinsViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Photo photoItem = items.get(position);
         String photoUrl = photoItem.getUrls().getThumb();
         String photoColor = photoItem.getColor();
-//        String s1 = photoItem.getAltDescription();
-        String s2 = photoItem.getDescription();
-        String s3 = photoItem.getUser().getName();
 
-        Picasso.get().load(photoUrl).placeholder(new ColorDrawable(Color.parseColor(photoColor))).into(holder.iv_pin);
+        holder.tv_description.setText(Objects.requireNonNull(photoItem.getUser()).getBio());
+        Glide.with(context).load(photoUrl).placeholder(new ColorDrawable(Color.parseColor(photoColor))).into(holder.iv_pin);
 
         holder.iv_pin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +57,39 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.PinsViewHo
                 callDetails(position);
             }
         });
+        holder.iv_pin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callDetails(position);
+            }
+        });
+
+        final boolean[] isLiked = {PrefsManager.getInstance(context.getActivity()).getBoolean(getLikedKey(photoItem.getId()), false)};
+
+        if (isLiked[0]) {
+            holder.iv_like.setImageResource(R.drawable.liked);
+        } else {
+            holder.iv_like.setImageResource(R.drawable.like);
+        }
+
+        holder.iv_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isLiked[0] = !isLiked[0];
+
+                if (isLiked[0]) {
+                    holder.iv_like.setImageResource(R.drawable.liked);
+                } else {
+                    holder.iv_like.setImageResource(R.drawable.like);
+                }
+
+                PrefsManager.getInstance(context.getActivity()).saveBoolean(getLikedKey(photoItem.getId()), isLiked[0]);
+            }
+        });
+    }
+
+    private String getLikedKey(String photoId) {
+        return "liked_" + photoId;
     }
 
     private void callDetails(int position) {
@@ -76,24 +105,16 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.PinsViewHo
         return items.size();
     }
 
-    static class PinsViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         ShapeableImageView iv_pin;
         TextView tv_description;
+        ImageView iv_like;
 
-        PinsViewHolder(View view) {
-            super(view);
-            iv_pin = view.findViewById(R.id.iv_pin);
-            tv_description = view.findViewById(R.id.tv_description);
-        }
-    }
-
-    private String getDescription(Object s1, String s2, String s3) {
-        if (s1 != null) {
-            return s1.toString();
-        } else if (s2 != null) {
-            return s2;
-        } else {
-            return "Photo was made by " + s3;
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            iv_pin = itemView.findViewById(R.id.iv_pin);
+            tv_description = itemView.findViewById(R.id.tv_description);
+            iv_like = itemView.findViewById(R.id.iv_like);
         }
     }
 }

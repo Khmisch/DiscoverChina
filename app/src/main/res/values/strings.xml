@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Discover China</string>
     <string name="related_photo_not_found">Related photos not found</string>
-    <string name="language">English</string>
     <string name="search_for_ideas">Search for ideas</string>
     <string name="saved_pins">Saved Pins</string>
     <string name="cities">Cities</string>
@@ -12,4 +11,5 @@
     <string name="description">Description</string>
     <string name="followers">Followers</string>
     <string name="no_saved_pins">No Saved Pins</string>
+    <string name="more_like_this">More Like This</string>
 </resources>

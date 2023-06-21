@@ -1,14 +1,9 @@
 package com.example.myapplication.fragment;
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.myapplication.R;
-import com.example.myapplication.adapter.ResultPhotosAdapter;
+import com.example.myapplication.adapter.ProfileAdapter;
 import com.example.myapplication.database.PinRepository;
 import com.example.myapplication.helper.SpacesItemDecoration;
 import com.example.myapplication.model.Photo;
@@ -31,7 +26,7 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
     private RecyclerView rvSavedPhotos;
-    private ResultPhotosAdapter photosAdapter;
+    private ProfileAdapter photosAdapter;
     private PinRepository pinRepository;
     private TextView tvNoSavedPins;
     private ImageView iv_mute;
@@ -56,7 +51,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        rvSavedPhotos = view.findViewById(R.id.rv_saved_photos);
+        rvSavedPhotos = view.findViewById(R.id.recyclerPins);
         tvNoSavedPins = view.findViewById(R.id.tv_no_saved_pins);
         iv_mute = view.findViewById(R.id.iv_mute);
 
@@ -64,7 +59,7 @@ public class ProfileFragment extends Fragment {
         SpacesItemDecoration decoration = new SpacesItemDecoration(10);
         rvSavedPhotos.addItemDecoration(decoration);
         pinRepository = new PinRepository(requireActivity().getApplication());
-        photosAdapter = new ResultPhotosAdapter(requireContext());
+        photosAdapter = new ProfileAdapter(requireContext());
         rvSavedPhotos.setAdapter(photosAdapter);
 
         tvNoSavedPins.setVisibility(View.GONE);

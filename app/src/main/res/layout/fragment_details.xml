@@ -94,10 +94,10 @@
                                     android:id="@+id/ratingBar"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:numStars="3"
+                                    android:numStars="5"
                                     android:progressTint="@color/black"
                                     android:isIndicator="false"
-                                    style="@style/Widget.AppCompat.RatingBar.Indicator"/>
+                                    style="@style/Widget.AppCompat.RatingBar.Small"/>
                             </LinearLayout>
 
                         </LinearLayout>
@@ -187,7 +187,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:padding="20dp"
-                        android:text="More like this"
+                        android:text="@string/more_like_this"
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />

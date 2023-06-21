@@ -19,21 +19,17 @@ import com.example.myapplication.model.Photo;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class ResultPhotosAdapter extends RecyclerView.Adapter<ResultPhotosAdapter.ViewHolder> {
+public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
 
     private Context context;
     private ArrayList<Photo> photoList;
 
-    public ResultPhotosAdapter(Context context) {
+    public ProfileAdapter(Context context) {
         this.context = context;
         this.photoList = new ArrayList<>();
     }
 
-    public void addPhotos(ArrayList<Photo> photoList) {
-        this.photoList.addAll(photoList);
-        notifyDataSetChanged();
-    }
-
+    @SuppressLint("NotifyDataSetChanged")
     public void addNewPhotos(ArrayList<Photo> photoList) {
         this.photoList.clear();
         this.photoList.addAll(photoList);
